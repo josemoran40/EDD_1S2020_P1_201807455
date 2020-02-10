@@ -15,19 +15,37 @@ public:
         system("color E0");
         //-----------------
         for(int i = 0; i<100;i++){
-            cout<<"-";
+            char x;
+            if(i==0){
+            x=201;
+            }else if(i==99){
+                x=187;
+            }else{
+            x  = 205;
+            }
+            cout<<x;
         }cout<<" "<<endl;
 
         for(int i = 0; i<25;i++){
-            cout<<"|";
+            char x = 186;
+            cout<<x;
             for(int j = 0;j<98;j++){
                 cout<<" ";
 
             }
-            cout<<"|"<<endl;
+
+            cout<<x<<endl;
         }
         for(int i = 0; i<100;i++){
-            cout<<"-";
+            char x;
+            if(i==0){
+            x=200;
+            }else if(i==99){
+                x=188;
+            }else{
+            x  = 205;
+            }
+            cout<<x;
         }cout<<" "<<endl;
         cout<<"             ";
         for(int i =0; i<3;i++){
@@ -47,11 +65,20 @@ public:
     void principal(){
         system("color E0");
         for(int i = 0; i<100;i++){
-            cout<<"-";
+            char x;
+            if(i==0){
+            x=201;
+            }else if(i==99){
+                x=187;
+            }else{
+            x  = 205;
+            }
+            cout<<x;
         }cout<<" "<<endl;
 
         for(int i = 0; i<25;i++){
-            cout<<"|";
+            char x = 186;
+            cout<<x;
             if(i==0){
                 cout<<"       UNIVERSIDAD SAN CARLOS DE GUATEMALA       ";
             }else if(i==1){
@@ -84,10 +111,18 @@ public:
                 cout<<" ";
 
             }
-            cout<<"|"<<endl;
+            cout<<x<<endl;
         }
         for(int i = 0; i<100;i++){
-            cout<<"-";
+            char x;
+            if(i==0){
+            x=200;
+            }else if(i==99){
+                x=188;
+            }else{
+            x  = 205;
+            }
+            cout<<x;
         }cout<<" "<<endl;
     }
 
