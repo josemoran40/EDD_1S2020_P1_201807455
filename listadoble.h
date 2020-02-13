@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 class NodoDoble{
@@ -35,6 +36,23 @@ public:
         int i = 1;
         while (temp != NULL) {
             cout << "Posicion "<<i<<" :"<<temp->data << endl;
+            temp = temp->next;
+            i++;
+        }
+    }
+
+    void printEditor() {
+        NodoDoble *temp = first;
+        int i = 1;
+        int b = 98;
+        while (temp != NULL) {
+            cout <<temp->data;
+            if(i==b){
+                b += 98;
+                cout<<"\n";
+                char x = 186;
+                cout<<x;
+            }
             temp = temp->next;
             i++;
         }
@@ -77,9 +95,11 @@ public:
 
     void insertAt(int pos, string data){
         if(pos>size+1 || pos<1)
-            return;
-        else if (pos==1)
-            prepend(data);
+        {
+
+            cout<<pos;return;}
+        else if (pos==1){
+            prepend(data);}
         else if (pos==size+1)
             append(data);
         else if (first!=NULL){
@@ -110,14 +130,13 @@ public:
         }
     }
 
-    void removeSpecific(int pos){
+    void  removeSpecific(int pos){
         if(pos> size || pos<1)
             return;
         else if (pos == 1)
             removeFirst();
         else if (pos == size)
-           // removeLast();
-        {}
+           removeLast();
         else if (first != NULL){
             NodoDoble *cur= first;
             for (int i = 0; i < pos; ++i) {
@@ -140,5 +159,126 @@ public:
             size--;
         }
     }
+
+    int  getSize(){
+        return size;
+    }
+
+    string getData(int pos){
+        if(pos> size || pos<1){
+            return "";
+        }
+
+        else if (pos == 1)
+            return first->data;
+        else if (pos == size)
+            return last->data;
+        else if (first != NULL){
+            NodoDoble *cur= first;
+            for (int i = 0; i < pos; ++i) {
+                cur = cur->next;
+            }
+            return cur->data;
+
+
+        }
+    }
+
+    bool buscarCoincidencias(string text, string reemplazar){
+        NodoDoble *temp = first;
+        int i = 0;
+        int contador = 0;
+        while (temp != NULL) {
+            i++;
+            char caracter = text[contador];
+            string s(1,caracter);
+            if(temp->data==s){
+                contador++;
+            }else{
+                contador=0;
+            }
+            if(contador==text.size()){
+                eliminarBloque(contador, i);
+                contador = 0;
+                reemplazarBloque(reemplazar, i);
+            }
+            temp = temp->next;
+
+        }
+    }
+
+    void eliminarBloque(int cantidad, int pos){
+        for(int i=0; i<cantidad;i++){
+            removeSpecific(pos-1);
+        }
+    }
+
+    void reemplazarBloque(string text, int pos){
+        for(int i=0; i<text.size();i++){
+            char caracter = text[i];
+            string s(1,caracter);
+            insertAt(pos+i,s);
+        }
+    }
+
+    void generarGraphvizListaDoble(){
+        string cadena ="";
+        cadena += "digraph G{\n";
+
+        cadena += "p0" ;
+        cadena += "[label = \"Inicio\" fontname=\"Times New Roman\" shape=parallelogram color=darkorange2];\n";
+        int n = 1;
+        NodoDoble * nodoAux = first;
+        for (int i = 1; i<size+1;i++)
+        {
+            cadena +="p";
+            string str= to_string(i);
+            cadena +=str;
+            cadena+="[label = \"";
+            cadena+=nodoAux->data;
+            cadena+="\" fontname=\"Times New Roman\" shape=parallelogram color=darkorange2];\n";
+            n++;
+            nodoAux =  nodoAux->next;
+        }
+        int aux = n;
+        int aux2 = n + 1;
+        n = 1;
+        cadena += "p";
+        cadena+= aux;
+        cadena+="[label = \"Fin\" fontname=\"Times New Roman\" shape=parallelogram color=darkorange2];\n";
+        cadena += "p0";
+        cadena+=":c->p1;\n";
+        for (int i = 0; i < aux-1; i++)
+        {
+            cadena += "p";
+            string st= to_string(n);
+            cadena +=st;
+            cadena+=":c->p";
+            string str= to_string(n+1);
+            cadena +=str;
+            cadena+=";\n";
+            n++;
+        }
+
+        cadena += "}";
+    cout<<cadena;
+         ofstream archivo;
+         archivo.open("graphviz.dot",ios::out);
+         if(archivo.fail()){
+
+             cout<<"no jala el archivo";
+             exit(1);
+         }
+        else{
+         archivo<<cadena;
+         archivo.close();
+
+         system("dot -Tpng graphviz.dot -o graphviz.png");
+        }
+    }
+
 };
+
+
+
 #endif // LISTADOBLE_H

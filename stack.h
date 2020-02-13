@@ -37,7 +37,7 @@ public:
 
     Cambio * pop(){
         if(top==NULL){
-            cout<<"La pila esta vacia"<<endl;
+            return NULL;
         }else{
             Cambio *datatemp =  top->cambio;
             Nodo *temp = top;

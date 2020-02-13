@@ -125,8 +125,49 @@ public:
             cout<<x;
         }cout<<" "<<endl;
     }
+    void archivo(){
+        system("color E0");
+        for(int i = 0; i<100;i++){
+            char x;
+            if(i==0){
+            x=201;
+            }else if(i==99){
+                x=187;
+            }else{
+            x  = 205;
+            }
+            cout<<x;
+        }cout<<" "<<endl;
+
+        for(int i = 0; i<25;i++){
+            char x = 186;
+            cout<<x;
+
+
+            for(int j = 0;j<98;j++){
+                cout<<" ";
+
+            }
+            cout<<x<<endl;
+        }
+        for(int i = 0; i<100;i++){
+            char x;
+            if(i==0){
+            x=200;
+            }else if(i==99){
+                x=188;
+            }else{
+            x  = 205;
+            }
+            cout<<x;
+        }cout<<" "<<endl;
+
+    }
 
 
 };
+
+
+
 
 #endif // INTERFAZ_H
