@@ -2,6 +2,7 @@
 #define LISTACIRCULAR_H
 #include <iostream>
 #include "archivo.h"
+#include <fstream>
 using namespace std;
 
 class NodoCircular{
@@ -73,6 +74,65 @@ public:
         return aux;
     }
 
+    void generarGraphvizListaDoble(){
+        string cadena ="";
+        cadena += "digraph G{\n";
+
+
+        int n = 1;
+        NodoCircular * nodoAux = first;
+        for (int i = 1; i<size+1;i++)
+        {
+            cadena +="p";
+            string str= to_string(i);
+            cadena +=str;
+            cadena+="[label = \"";
+            cadena+=nodoAux->data->getNombre();
+            cadena+="\" fontname=\"Times New Roman\" shape=parallelogram color=darkorange2];\n";
+            n++;
+            nodoAux =  nodoAux->next;
+        }
+        int aux = n;
+        int aux2 = n + 1;
+        n = 1;
+
+
+        for (int i = 0; i < aux-2; i++)
+        {
+            cadena += "p";
+            string st= to_string(n);
+            cadena +=st;
+            cadena+=":c->p";
+            string str= to_string(n+1);
+            cadena +=str;
+            cadena+=";\n";
+            n++;
+        }
+
+        cadena += "p";
+        string st= to_string(n);
+        cadena +=st;
+        cadena+=":c->p1";
+        cadena+=";\n";
+
+        \
+
+        cadena += "}";
+
+         ofstream archivo;
+         archivo.open("C:\\Users\\jose_\\OneDrive\\Escritorio\\edd.txt",ios::out);
+         if(archivo.fail()){
+
+             cout<<"no jala el archivo";
+             exit(1);
+         }
+        else{
+         archivo<<cadena;
+         archivo.close();
+
+         system("dot -Tpng C:\\Users\\jose_\\OneDrive\\Escritorio\\edd.txt -o C:\\Users\\jose_\\OneDrive\\Escritorio\\edd.png");
+        }
+    }
 
 
 };

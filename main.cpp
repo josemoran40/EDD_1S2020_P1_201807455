@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <stack.h>
 #include <listacircular.h>
+#include <linkedlist.h>
 
 #include <string.h>
 #include <ctype.h>
@@ -20,6 +21,8 @@ using namespace std;
 
 Stack *realizado;
 Stack *revertido;
+LinkedList *palabrasBuscadas;
+LinkedList *palabrasBuscadasAlfabeticamente;
 int palabrasRepe = 0;
 int arranquex =0;
 int arranquey =0;
@@ -75,7 +78,7 @@ void leerArchivo(string ruta, ListaDoble *list){
       string texto = "";
       while(getline(in, s)){ // Discards newline char
         setearCursor(1,y);
-          cout << s << "\n";
+          cout << s ;
           texto+=s;
           for(int j = 0; j<s.size();j++){
               char car = s[j];
@@ -103,8 +106,7 @@ void eleccionArchivo(){
     while(eleccion){
         char tecla = getch();
         if(tecla==120){
-            //Generar reporte
-            menu();
+            listaArchivos->generarGraphvizListaDoble();
         }else if(tecla>40&&tecla<30){
                 string s(1,tecla);
                 int p = std::stoi(s);
@@ -131,6 +133,9 @@ void editor(ListaDoble *listaParametro);
 void menu(){
     realizado = new Stack();
     revertido = new Stack();
+    palabrasBuscadas = new LinkedList();
+
+    palabrasBuscadasAlfabeticamente = new LinkedList();
     system("cls");
     Interfaz *interfaz = new Interfaz();
     interfaz->principal();
@@ -185,6 +190,16 @@ void imprimirText(string text){
     }
 }
 
+void limpiarEditor(){
+    int num = 98;
+    for(int i = 0; i<25; i++){
+        setearCursor(1,i+1);
+        for(int j=0;j<98;j++){
+            cout<<" ";
+        }
+    }
+}
+
 string buscarYReemplazar(string text, ListaDoble *&list){
     string replacement;
     setearCursor(45,29);
@@ -205,6 +220,34 @@ string buscarYReemplazar(string text, ListaDoble *&list){
           list->reemplazarBloque(replacement, pos);
           cout<<pos;
           revertido->push(cambio);
+          palabrasBuscadas->prepend(cambio);
+          palabrasBuscadasAlfabeticamente->insertarAlfabeticamente(cambio);
+          pos = text.find(findMe, pos + replacement.size());
+          i++;
+      }
+      setearCursor(35,35);
+      palabrasRepe = i;
+
+      return text;
+}
+
+
+string buscarYReemplazarPorCTRL(string text, ListaDoble *&list, string find, string replace){
+    string replacement = replace;
+
+      string findMe=find;
+      // Find "UFO" in bigNews and overwrite it:
+      int pos = text.find(findMe);
+      int i = 0;
+      while(pos!=-1){
+          text.replace(pos, findMe.size(), replacement);
+          Cambio *cambio = new Cambio(findMe, replacement, false, text);
+          list->eliminarBloque(findMe.size(), pos+1);
+          list->reemplazarBloque(replacement, pos);
+          cout<<pos;
+          revertido->push(cambio);
+          palabrasBuscadas->prepend(cambio);
+          palabrasBuscadasAlfabeticamente->insertarAlfabeticamente(cambio);
           pos = text.find(findMe, pos + replacement.size());
           i++;
       }
@@ -215,7 +258,7 @@ string buscarYReemplazar(string text, ListaDoble *&list){
 }
 
 string borrar(string text, int pos){
-    text.replace(pos-2, 1, "");
+    text.replace(pos-2, 1, "");    
     return text;
 }
 
@@ -250,20 +293,17 @@ void editor(ListaDoble *listaParametro){
             //posy--;
             //setearCursor(posx, posy);
         }else if (x==13) {
-            posx = 2;
-            posy++;
-            setearCursor(posx, posy);
+
         }else if(x==23){
             text = buscarYReemplazar(text, list);
             system("cls");
             interfaz->editor();
             reiniciarCursor();
-            cout<<text;
+            imprimirText(text);
             posx=text.size()+1;
             setearCursor(35,30);
             cout<<"Palabras afectadas: "<<palabrasRepe;
             setearCursor(posx, posy);
-            cout<<" ";
 
         }else if(x == 49){
             setearCursor(0,29);
@@ -272,27 +312,43 @@ void editor(ListaDoble *listaParametro){
         }else if(x == 26){
             //ctrl+z
 
-            Cambio *cambio = realizado->pop();
+            Cambio *cambio = realizado->pop();            
              if(cambio!=NULL){
                 reiniciarCursor();
-                if(!cambio->getAgregado()){
-                    cambio->setAgregado(true);
-                    list->insertAt(cambio->getPosicion(),cambio->getPalabra());
-                    text = cambio->getOracion();
-                    imprimirText(text);
-                    posx = cambio->getPosicion();
-                    setearCursor(posx, posy);
-                }else{
-                    cambio->setAgregado(false);
-                    list->removeSpecific(cambio->getPosicion());
-                    text = borrar(text, cambio->getPosicion()+1);
+                if(cambio->getEstado()==NULL){
+                    if(!cambio->getAgregado()){
+                        cambio->setAgregado(true);
+                        list->insertAt(cambio->getPosicion(),cambio->getPalabra());
+                        text = cambio->getOracion();
+                        limpiarEditor();
+                        setearCursor(1,1);
+                        imprimirText(text);
+                        posx = cambio->getPosicion();
+                    }else{
+                        cambio->setAgregado(false);
+                        list->removeSpecific(cambio->getPosicion());
+                        text = borrar(text, cambio->getPosicion()+1);
+                        reiniciarCursor();
+                        limpiarEditor();
+                        setearCursor(1,1);
+                        imprimirText(text);
+
+                        //list->print();
+                        posx = cambio->getPosicion();
+                        setearCursor(posx, posy);
+                    }
+                }else if(cambio->getAgregado()==NULL){
+                    //Buscar y reemplazar por ctrl+z
+                    text = buscarYReemplazarPorCTRL(text, list,cambio->getPalabraReemplazada(), cambio->getPalabraBuscada());
+                    system("cls");
+                    interfaz->editor();
                     reiniciarCursor();
                     imprimirText(text);
-
-                    //list->print();
-                    posx = cambio->getPosicion();
-                    cout<<" ";
+                    posx=text.size()+1;
+                    setearCursor(35,30);
+                    cout<<"Palabras afectadas: "<<palabrasRepe;
                     setearCursor(posx, posy);
+
                 }
                 revertido->push(cambio);
                 setearCursor(posx, posy);
@@ -302,24 +358,41 @@ void editor(ListaDoble *listaParametro){
             Cambio *cambio = revertido->pop();
             if(cambio!=NULL){
                 reiniciarCursor();
-                if(cambio->getAgregado()){
-                    cambio->setAgregado(false);
-                    list->removeSpecific(cambio->getPosicion());
-                    text = borrar(text, cambio->getPosicion()+1);
+                if(cambio->getEstado()==NULL){
+                    if(cambio->getAgregado()){
+                        cambio->setAgregado(false);
+                        list->removeSpecific(cambio->getPosicion());
+                        text = borrar(text, cambio->getPosicion()+1);
+                        reiniciarCursor();
+                        limpiarEditor();
+                        setearCursor(1,1);
+                        imprimirText(text);
+
+                        //list->print();
+                        posx = cambio->getPosicion();
+                        setearCursor(posx, posy);
+                    }else{
+                        cambio->setAgregado(true);
+                        list->insertAt(cambio->getPosicion(),cambio->getPalabra());
+                        text = cambio->getOracion();
+                        limpiarEditor();
+                        setearCursor(1,1);
+                        imprimirText(text);
+                        posx = cambio->getPosicion()+1;
+
+                    }
+                 }else if(cambio->getAgregado()==NULL){
+                    //Buscar y reemplazar por ctrl+z
+                    text = buscarYReemplazarPorCTRL(text, list,cambio->getPalabraReemplazada(), cambio->getPalabraBuscada());
+                    system("cls");
+                    interfaz->editor();
                     reiniciarCursor();
                     imprimirText(text);
+                    posx=text.size()+1;
+                    setearCursor(35,30);
+                    cout<<"Palabras afectadas: "<<palabrasRepe;
+                    setearCursor(posx, posy);
 
-                    //list->print();
-                    posx = cambio->getPosicion();
-                    cout<<" ";
-                    setearCursor(posx, posy);
-                }else{
-                    cambio->setAgregado(true);
-                    list->insertAt(cambio->getPosicion(),cambio->getPalabra());
-                    text = cambio->getOracion();
-                    imprimirText(text);
-                    posx = cambio->getPosicion();
-                    setearCursor(posx, posy);
                 }
                 realizado->push(cambio);
                 setearCursor(posx, posy);
@@ -327,12 +400,10 @@ void editor(ListaDoble *listaParametro){
         }else if (x==27){
             system("cls");
             list->print();
-            menu();
+            prueba = false;
         }else if(x==55){
-            list->generarGraphvizListaDoble();
-        }
-
-        if(x!=75 && x!=224 && x!= 80 && x!=77 && x!=72 && x!=23 && x!=25 && x!=26 && x!=27){
+            palabrasBuscadasAlfabeticamente->generarGraphvizListaSimple();
+        }else if(x!=75 && x!=224 && x!= 80 && x!=77 && x!=72 && x!=23 && x!=25 && x!=26 && x!=27){
 
             if(x==8){
                 if(posx!=1){
@@ -340,13 +411,12 @@ void editor(ListaDoble *listaParametro){
                     Cambio *cambio = new Cambio(s.append(1,eliminado), posx, false, text);
                     text = borrar(text, posx);
                     reiniciarCursor();
+                    limpiarEditor();
+                    setearCursor(1,1);
                     imprimirText(text);
-                    cout<<" ";
                     list->removeSpecific(posx-1);
                     realizado->push(cambio);
-                    setearCursor(posx, posy);
                     posx--;
-                    setearCursor(posx, posy);
                 }
             }else{
                 posx++;
@@ -357,7 +427,7 @@ void editor(ListaDoble *listaParametro){
                 realizado->push(cambio);
                 reiniciarCursor();
                 imprimirText(text);
-                setearCursor(posx, posy);
+                //setearCursor(posx, posy);
             }
             s ="";
             t="";
@@ -366,6 +436,7 @@ void editor(ListaDoble *listaParametro){
 
         }
     }
+    menu();
 }
 
 

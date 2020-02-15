@@ -225,8 +225,7 @@ public:
         string cadena ="";
         cadena += "digraph G{\n";
 
-        cadena += "p0" ;
-        cadena += "[label = \"Inicio\" fontname=\"Times New Roman\" shape=parallelogram color=darkorange2];\n";
+
         int n = 1;
         NodoDoble * nodoAux = first;
         for (int i = 1; i<size+1;i++)
@@ -243,12 +242,9 @@ public:
         int aux = n;
         int aux2 = n + 1;
         n = 1;
-        cadena += "p";
-        cadena+= aux;
-        cadena+="[label = \"Fin\" fontname=\"Times New Roman\" shape=parallelogram color=darkorange2];\n";
-        cadena += "p0";
-        cadena+=":c->p1;\n";
-        for (int i = 0; i < aux-1; i++)
+
+
+        for (int i = 0; i < aux-2; i++)
         {
             cadena += "p";
             string st= to_string(n);
@@ -260,10 +256,22 @@ public:
             n++;
         }
 
+        for (int i = 0; i < aux-2; i++)
+        {
+            cadena += "p";
+            string st= to_string(n);
+            cadena +=st;
+            cadena+=":c->p";
+            string str= to_string(n-1);
+            cadena +=str;
+            cadena+=";\n";
+            n--;
+        }
+
         cadena += "}";
-    cout<<cadena;
+
          ofstream archivo;
-         archivo.open("graphviz.dot",ios::out);
+         archivo.open("C:\\Users\\jose_\\OneDrive\\Escritorio\\edd.txt",ios::out);
          if(archivo.fail()){
 
              cout<<"no jala el archivo";
@@ -273,7 +281,7 @@ public:
          archivo<<cadena;
          archivo.close();
 
-         system("dot -Tpng graphviz.dot -o graphviz.png");
+         system("dot -Tpng C:\\Users\\jose_\\OneDrive\\Escritorio\\edd.txt -o C:\\Users\\jose_\\OneDrive\\Escritorio\\edd.png");
         }
     }
 

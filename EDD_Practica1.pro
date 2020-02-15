@@ -19,6 +19,7 @@ SOURCES += \
         cambio.cpp \
         ggg.cpp \
         interfaz.cpp \
+        linkedlist.cpp \
         listacircular.cpp \
         listadoble.cpp \
         main.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     cambio.h \
     ggg.h \
     interfaz.h \
+    linkedlist.h \
     listacircular.h \
     listadoble.h \
     stack.h
