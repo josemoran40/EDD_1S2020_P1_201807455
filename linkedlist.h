@@ -170,6 +170,26 @@ public:
     }
 
 
+    void ordenar(){
+        Node *pivote = first;
+        Node *actual;
+        Cambio *temp;
+
+        while (pivote!=last) {
+            actual = pivote->next;
+            while (actual!=NULL) {
+                if (pivote->data->getPalabraBuscada()<actual->data->getPalabraBuscada()){
+                    temp = pivote->data;
+                    pivote->data = actual->data;
+                    actual->data = temp;
+                }
+                actual = actual->next;
+            }
+            pivote = pivote->next;
+        }
+    }
+
+
     void generarGraphvizListaSimple(){
         string cadena ="";
         cadena += "digraph G{\n";

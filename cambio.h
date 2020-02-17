@@ -14,6 +14,7 @@ private:
    int posicion;
    bool agregado;
    string oracion;
+   bool tipo;
 
 public:
    Cambio(string palabraBuscada, string palabraReemplazada, bool estado, string oracion){
@@ -24,6 +25,7 @@ public:
        this->posicion=0;
        this->agregado=NULL;
        this->oracion = oracion;
+       this->tipo = false;
    }
 
    Cambio(string palabra, int posicion, bool agregado, string oracion){
@@ -34,6 +36,7 @@ public:
        this->palabraReemplazada = "";
        this->estado = NULL;
        this->oracion = oracion;
+       this->tipo = true;
    }
 
    string getPalabraBuscada(){
@@ -86,6 +89,10 @@ public:
 
    void setAgregado(bool agregado){
        this->agregado = agregado;
+   }
+
+   bool getTipo(){
+       return tipo;
    }
 };
 
