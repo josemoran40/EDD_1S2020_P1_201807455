@@ -141,7 +141,7 @@ void menu(){
     realizado = new Stack();
     revertido = new Stack();
     palabrasBuscadas = new LinkedList();
-
+    textoArranque  = "";
     palabrasBuscadasAlfabeticamente = new LinkedList();
     system("cls");
     Interfaz *interfaz = new Interfaz();
