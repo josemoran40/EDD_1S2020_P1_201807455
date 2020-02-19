@@ -225,14 +225,30 @@ void limpiarEditor(){
 
 string buscarYReemplazar(string text, ListaDoble *&list, int &xx){
     string replacement;
+    string temporal;
+    string aux;
     setearCursor(45,29);
-    cout<<"Reemplazar: ";
-    cin>>replacement;
+    cout<<"Buscar Y Reemplazar: ";
+    cin>>aux;
 
-      string findMe;
-      setearCursor(45,28+2);
-      cout<<"Buscar: ";
-      cin>>findMe;
+      string findMe="";
+
+
+      for (int i = 0; i <aux.size(); i++)
+          {
+              if (aux[i] == ';')
+              {
+                  findMe = temporal;
+                  temporal = "";
+                  i++;
+              }
+              temporal += aux[i];
+              if (i ==aux.size() - 1)
+              {
+                  replacement = temporal;
+              }
+          }
+
       // Find "UFO" in bigNews and overwrite it:
       int pos = text.find(findMe);
       int i = 0;
